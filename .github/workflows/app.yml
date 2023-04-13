@@ -26,16 +26,18 @@ jobs:
     - name: Build Executable
       run: |
         pyinstaller --clean --onefile LinSoTrackerTemplateChecker.py
-        mv dist/LinSoTrackerTemplateChecker dist/LinSoTrackerTemplateChecker.exe
+        mv LinSoTrackerTemplateChecker.exe dist/
 
-    - name: Get Tag Name
+    - name: Get Tag Name and Commit Message
       uses: actions/github-script@v4
-      id: tag_name
+      id: tag_and_commit
       with:
         script: |
           const tagName = context.payload.ref.replace('refs/tags/', '');
+          const commitMsg = context.payload.head_commit.message;
           console.log(tagName);
-          return tagName;
+          console.log(commitMsg);
+          return { tagName, commitMsg };
 
     - name: Create Release
       id: create_release
@@ -43,9 +45,9 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ steps.tag_name.outputs.result }}
-        release_name: Release ${{ steps.tag_name.outputs.result }}
-        body: This is my first release
+        tag_name: ${{ steps.tag_and_commit.outputs.tagName }}
+        release_name: Release ${{ steps.tag_and_commit.outputs.tagName }}
+        body: ${{ steps.tag_and_commit.outputs.commitMsg }}
         draft: false
         prerelease: false
 
