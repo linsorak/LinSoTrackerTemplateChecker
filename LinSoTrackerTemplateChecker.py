@@ -14,7 +14,7 @@ class Application(tk.Frame):
         self.template_name = None
         self.master = master
         self.master.geometry("800x500")
-        self.master.title("LinSoTracker JSON Checker")
+        self.master.title("LinSoTracker Template Checker v1.0.0.1")
 
         screen_width = root.winfo_screenwidth()
         screen_height = root.winfo_screenheight()
