@@ -166,23 +166,29 @@ class Application(tk.Frame):
         return items
 
     def select_json_file(self):
-        file_path = filedialog.askopenfilename(filetypes=[("tracker.json", "tracker.json")])
-        self.list_rules = None
-        self.actions_conditions_keys = None
-        self.list_items = None
-        self.listbox_items.delete("0", "end")
-        self.listbox_problems.delete("0", "end")
-        self.listbox_problems.insert("end", f"-----------ERRORS @ {os.path.basename(file_path)}-----------")
-        self.read_json(file_path)
-        self.listbox_problems.insert("end", "--------------------------------------------")
-        self.button_problems.configure(state="normal")
+        try:
+            file_path = filedialog.askopenfilename(filetypes=[("tracker.json", "tracker.json")])
+            self.list_rules = None
+            self.actions_conditions_keys = None
+            self.list_items = None
+            self.listbox_items.delete("0", "end")
+            self.listbox_problems.delete("0", "end")
+            self.listbox_problems.insert("end", f"-----------ERRORS @ {os.path.basename(file_path)}-----------")
+            self.read_json(file_path)
+            self.listbox_problems.insert("end", "--------------------------------------------")
+            self.button_problems.configure(state="normal")
+        except FileNotFoundError:
+            pass
 
     def select_map_file(self):
-        file_path = filedialog.askopenfilename(filetypes=[("map file json", "*.json")])
-        self.listbox_problems.insert("end", f"-----------ERRORS @ {os.path.basename(file_path)}-----------")
-        self.read_map(file_path)
-        self.listbox_problems.insert("end", "--------------------------------------------")
-        self.export_button.configure(state="normal")
+        try:
+            file_path = filedialog.askopenfilename(filetypes=[("map file json", "*.json")])
+            self.listbox_problems.insert("end", f"-----------ERRORS @ {os.path.basename(file_path)}-----------")
+            self.read_map(file_path)
+            self.listbox_problems.insert("end", "--------------------------------------------")
+            self.export_button.configure(state="normal")
+        except FileNotFoundError:
+            pass
 
     def export_errors(self):
         script_path = os.path.dirname(os.path.realpath(__file__))

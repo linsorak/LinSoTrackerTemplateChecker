@@ -12,15 +12,42 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v2
 
+    - name: Setup Python 3.10
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.10
+
     - name: Install Dependencies
       run: |
-        python -m pip install --upgrade pip
+        pip install --upgrade pip
+        pip install -r requirements.txt
         pip install pyinstaller
 
     - name: Build Executable
       run: |
         pyinstaller --clean --onefile LinSoTrackerTemplateChecker.py
         mv dist/LinSoTrackerTemplateChecker dist/LinSoTrackerTemplateChecker.exe
+
+    - name: Get Tag Name
+      uses: actions/github-script@v4
+      id: tag_name
+      with:
+        script: |
+          const tagName = context.payload.ref.replace('refs/tags/', '');
+          console.log(tagName);
+          return tagName;
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1.0.6
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.tag_name.outputs.result }}
+        release_name: Release ${{ steps.tag_name.outputs.result }}
+        body: This is my first release
+        draft: false
+        prerelease: false
 
     - name: Upload Executable
       uses: actions/upload-artifact@v2
